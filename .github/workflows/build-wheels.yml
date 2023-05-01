@@ -38,7 +38,7 @@ jobs:
         build-requirements: 'pydub requests PyYAML typing_extensions'
         system-packages: 'epel-release swig python3-devel'
         package-path: '/pjsip-apps/src/swig/python'
-        pre-build-command: 'sh /pjsip-apps/src/swig/python/build-pjsua2.sh'
+        pre-build-command: 'ls -la && sh ./pjsip-apps/src/swig/python/build-pjsua2.sh'
         
     - name: Build manylinux Python wheels
       uses: RalfG/python-wheels-manylinux-build@v0.7.1-manylinux2014_aarch64
@@ -47,7 +47,7 @@ jobs:
         build-requirements: 'pydub requests PyYAML typing_extensions'
         system-packages: 'epel-release swig python3-devel'
         package-path: '/pjsip-apps/src/swig/python'
-        pre-build-command: 'sh /pjsip-apps/src/swig/python/build-pjsua2.sh'
+        pre-build-command: 'ls -la && sh ./pjsip-apps/src/swig/python/build-pjsua2.sh'
 
     - name: Archive production artifacts
       uses: actions/upload-artifact@v3
