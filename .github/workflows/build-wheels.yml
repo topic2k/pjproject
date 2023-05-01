@@ -51,7 +51,7 @@ jobs:
           arch: aarch64
           distro: alpine_latest
           run: |
-            apt install -y ffmpeg ffmpeg-devel swig python3-dev build-essential git python 3 python3-pip
+            apk add ffmpeg ffmpeg-dev git swig python3 py3-pip python3-dev build-base
             ls -la
             ./configure --enable-shared --disable-libwebrtc
             make dep
