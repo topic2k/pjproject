@@ -2,6 +2,7 @@ sudo yum localinstall --nogpgcheck https://download1.rpmfusion.org/free/el/rpmfu
 sudo yum install ffmpeg ffmpeg-devel
 ffmpeg -version
 
+cd ../../../..
 ./configure --enable-shared --disable-libwebrtc
 make dep
 make
