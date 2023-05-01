@@ -1,5 +1,5 @@
-yum localinstall --nogpgcheck https://download1.rpmfusion.org/free/el/rpmfusion-free-release-7.noarch.rpm
-yum install ffmpeg ffmpeg-devel
+yum -y localinstall --nogpgcheck https://download1.rpmfusion.org/free/el/rpmfusion-free-release-7.noarch.rpm
+yum -y install ffmpeg ffmpeg-devel
 ffmpeg -version
 
 cd ../../../..
