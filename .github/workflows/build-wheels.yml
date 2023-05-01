@@ -7,55 +7,56 @@ on:
     branches: [ wheels ]
 
 jobs:
-  deploy:
+  Linux_x86_64:
     runs-on: ubuntu-latest
     steps:
-    
-    - name: Checkout branch 
-      uses: actions/checkout@v3
-      with:
-        fetch-depth: 1
-        ref: wheels
-    
-#    - name: Set up Python
-#      uses: actions/setup-python@v3
+      - name: Checkout branch 
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 1
+          ref: wheels
 
-#    - name: Install dependencies
-#      run: |
-#        python -m pip install --upgrade pip
-#        pip install twine
-#        pip install flake8
-#    - name: Lint with flake8 for syntax errors
-#      run: |
-#        pip install flake8
-#        flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
-#        flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+      - name: Linux x86_64 wheels
+        uses: RalfG/python-wheels-manylinux-build@v0.7.1-manylinux2014_x86_64
+        with:
+          python-versions: 'cp310-cp310'
+          build-requirements: 'pydub requests PyYAML typing_extensions'
+          system-packages: 'epel-release swig python3-devel'
+          package-path: '/pjsip-apps/src/swig/python'
+          pre-build-command: 'sh build-pjsua2.sh'
 
-    - name: Linux x86_64 wheels
-      uses: RalfG/python-wheels-manylinux-build@v0.7.1-manylinux2014_x86_64
-      with:
-        python-versions: 'cp310-cp310'
-        build-requirements: 'pydub requests PyYAML typing_extensions'
-        system-packages: 'epel-release swig python3-devel'
-        package-path: '/pjsip-apps/src/swig/python'
-        pre-build-command: 'sh build-pjsua2.sh'
+      - name: Archive production artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: pjsua2-wheels
+          path: |
+            dist/*
         
-    - name: Linux aarch64 wheels
-      uses: RalfG/python-wheels-manylinux-build@v0.7.1-manylinux2014_aarch64
-      with:
-        python-versions: 'cp310-cp310'
-        build-requirements: 'pydub requests PyYAML typing_extensions'
-        system-packages: 'epel-release swig python3-devel'
-        package-path: '/pjsip-apps/src/swig/python'
-        pre-build-command: 'sh build-pjsua2.sh'
+  Linux_aarch64:
+    runs-on: buildjet-4vcpu-ubuntu-2204
+    steps:
+      - name: Checkout branch 
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 1
+          ref: wheels
 
-    - name: Archive production artifacts
-      uses: actions/upload-artifact@v3
-      with:
-        name: pjsua2-wheels
-        path: |
-          dist/*
-          
+      - name: Linux aarch64 wheels
+        uses: RalfG/python-wheels-manylinux-build@v0.7.1-manylinux2014_aarch64
+        with:
+          python-versions: 'cp310-cp310'
+          build-requirements: 'pydub requests PyYAML typing_extensions'
+          system-packages: 'epel-release swig python3-devel'
+          package-path: '/pjsip-apps/src/swig/python'
+          pre-build-command: 'sh build-pjsua2.sh'
+
+      - name: Archive production artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: pjsua2-wheels
+          path: |
+            dist/*
+    
 #    - name: Publish wheels to PyPI
 #      env:
 #        TWINE_USERNAME: ${{ secrets.PYPI_USERNAME }}
