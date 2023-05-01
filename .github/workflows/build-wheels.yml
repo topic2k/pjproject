@@ -45,7 +45,7 @@ jobs:
           ref: wheels
           
       - name: Linux aarch64 wheels
-        uses: uraimo/run-on-arch-action@v2       
+        uses: danhunsaker/run-on-arch-action@pass-arch-to-docker
         id: runcmd
         with:
           arch: aarch64
