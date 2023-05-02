@@ -48,12 +48,12 @@ jobs:
         uses: danhunsaker/run-on-arch-action@pass-arch-to-docker
         id: runcmd
         with:
-          # arch: none  # aarch64
-          # distro: none  # alpine_latest
-          base_image: homeassistant/raspberrypi4-64-homeassistant
+          arch: aarch64
+          distro: alpine_latest
+          # base_image: homeassistant/raspberrypi4-64-homeassistant
           run: |
-            # apk add ffmpeg ffmpeg-dev git swig python3 py3-pip python3-dev build-base
-            apt-get install -y ffmpeg ffmpeg-dev git swig python3 py3-pip python3-dev build-base
+            apk add ffmpeg ffmpeg-dev git swig python3 py3-pip python3-dev build-base gcc gcc-cross-embedded 
+            # apt-get install -y ffmpeg ffmpeg-dev git swig python3 py3-pip python3-dev build-base
             ls -la
             ./configure --enable-shared --disable-libwebrtc
             make dep
