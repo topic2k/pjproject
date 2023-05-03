@@ -48,7 +48,7 @@ jobs:
         uses: topic2k/run-on-arch-action@master  # danhunsaker/run-on-arch-action@pass-arch-to-docker
         id: runcmd
         with:
-          # arch: aarch64
+          arch: aarch64
           # distro: alpine_latest
           base_image: homeassistant/aarch64-base-ubuntu  # homeassistant/raspberrypi4-64-homeassistant
           run: |
