@@ -45,14 +45,18 @@ jobs:
           ref: wheels
           
       - name: Linux aarch64 wheels
-        uses: uraimo/run-on-arch-action@release-3.0.0  # topic2k/run-on-arch-action@master  # danhunsaker/run-on-arch-action@pass-arch-to-docker
+        uses: uraimo/run-on-arch-action@release-3.0.0
+        # topic2k/run-on-arch-action@master  # danhunsaker/run-on-arch-action@pass-arch-to-docker
         id: runcmd
         with:
-          # arch: aarch64
-          # distro: alpine_latest
-          base_image: homeassistant/aarch64-base-ubuntu  # homeassistant/raspberrypi4-64-homeassistant
+          arch: none
+          # aarch64
+          distro: none
+          # alpine_latest
+          base_image: homeassistant/aarch64-base-ubuntu
+          # homeassistant/raspberrypi4-64-homeassistant
+          # apk add ffmpeg ffmpeg-dev git swig python3 py3-pip python3-dev build-base gcc gcc-cross-embedded
           run: |
-            # apk add ffmpeg ffmpeg-dev git swig python3 py3-pip python3-dev build-base gcc gcc-cross-embedded
             apt-get update
             apt-get install -y ffmpeg ffmpeg-dev git swig python3 py3-pip python3-dev build-base
             ls -la
