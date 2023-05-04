@@ -22,7 +22,7 @@ jobs:
         with:
           python-versions: 'cp310-cp310'
           build-requirements: 'pydub requests PyYAML typing_extensions'
-          system-packages: 'epel-release swig python3-devel'
+          system-packages: 'epel-release swig python3-devel python3-pip python3-wheel'
           package-path: 'pjsip-apps/src/swig/python'
           pre-build-command: 'sh build-pjsua2.sh'
 
