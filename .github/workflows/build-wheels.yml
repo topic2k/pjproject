@@ -53,12 +53,12 @@ jobs:
           # aarch64
           distro: none
           # alpine_latest
-          base_image: homeassistant/aarch64-base-ubuntu
-          # homeassistant/raspberrypi4-64-homeassistant
-          # apk add ffmpeg ffmpeg-dev git swig python3 py3-pip python3-dev build-base gcc gcc-cross-embedded
+          # base_image: homeassistant/aarch64-base-ubuntu
+          base_image: homeassistant/raspberrypi4-64-homeassistant
+          # apt-get update
+          # apt-get install -y ffmpeg ffmpeg-dev git swig python3 py3-pip python3-dev build-base
           run: |
-            apt-get update
-            apt-get install -y ffmpeg ffmpeg-dev git swig python3 py3-pip python3-dev build-base
+            apk add ffmpeg ffmpeg-dev git swig python3 py3-pip python3-dev build-base gcc gcc-cross-embedded linux-headers
             ls -la
             ./configure --enable-shared --disable-libwebrtc
             make dep
@@ -66,6 +66,8 @@ jobs:
             make install
             cd pjsip-apps/src/swig
             make python
+            cd python
+            make wheel
 
 
 #      - name: Linux aarch64 wheels
