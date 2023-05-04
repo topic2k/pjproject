@@ -45,6 +45,10 @@ jobs:
         uses: uraimo/run-on-arch-action@release-3.0.0
         id: runcmd
         with:
+          arch: none
+          distro: none
+          base_image: homeassistant/raspberrypi4-64-homeassistant
+
           # Not required, but speeds up builds
           githubToken: ${{ github.token }}
           # Create an artifacts directory
@@ -53,13 +57,11 @@ jobs:
           # Mount the artifacts directory as /artifacts in the container
           dockerRunArgs: |
             --volume "${PWD}/artifacts:/artifacts"
-
-          arch: none
-          distro: none
-          base_image: homeassistant/raspberrypi4-64-homeassistant
-          run: |
+          install: |
+            apk update
             apk add ffmpeg ffmpeg-dev git swig python3 py3-pip python3-dev build-base gcc gcc-cross-embedded linux-headers
             pip install wheel
+          run: |
             ./configure --enable-shared --disable-libwebrtc
             make dep
             make
