@@ -1,3 +1,5 @@
+#!/bin/sh
+
 yum -y localinstall --nogpgcheck https://download1.rpmfusion.org/free/el/rpmfusion-free-release-7.noarch.rpm
 yum -y install ffmpeg ffmpeg-devel
 ffmpeg -version
@@ -9,3 +11,5 @@ make
 make install
 cd pjsip-apps/src/swig
 make python
+cd python
+make wheel
