@@ -2,7 +2,7 @@
 
 yum -y localinstall --nogpgcheck https://download1.rpmfusion.org/free/el/rpmfusion-free-release-7.noarch.rpm
 yum -y install ffmpeg ffmpeg-devel
-python -m pip install wheel
+python -m pip install --user wheel
 
 cd ../../../..
 ./configure --enable-shared --disable-libwebrtc
