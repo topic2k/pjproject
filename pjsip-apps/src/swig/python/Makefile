@@ -1,12 +1,5 @@
 PYTHON_SO=_pjsua2.so
-
-USE_PYTHON3?=1
-
-ifeq ($(USE_PYTHON3),1)
-  PYTHON_EXE=python3
-else
-  PYTHON_EXE=python2
-endif
+PYTHON_EXE=python3
 
 #PYTHON_SETUP_FLAGS = --inplace 
 ifeq ($(OS),Windows_NT)
