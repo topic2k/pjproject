@@ -12,5 +12,4 @@ cd pjsip-apps/src/swig
 export USE_PYTHON3=1
 make python
 cd python
-pip list
 make wheel
