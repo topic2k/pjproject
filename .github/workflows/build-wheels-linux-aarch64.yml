@@ -39,7 +39,8 @@ jobs:
           install: |
             apk update
             apk add ffmpeg ffmpeg-dev git swig python3 py3-pip python3-dev build-base gcc gcc-cross-embedded linux-headers
-            pip install wheel
+            python3 -m pip install wheel
+            python3 -m pip install cibuildwheel==2.12.3
           run: |
             ./configure --enable-shared --disable-libwebrtc
             make dep
@@ -52,6 +53,18 @@ jobs:
             make wheel
             ls -la
             cp -R ./dist/* /artifacts/
+
+      - name: Pushes test file
+        uses: dmnemec/copy_file_to_another_repo_action@main
+        env:
+          API_TOKEN_GITHUB: ${{ secrets.API_TOKEN_GITHUB }}
+        with:
+          source_file: ./dist/.
+          destination_repo: ${{ env.WHEELS_REPO }}
+          destination_folder: 'wheels'
+          user_email: ${{ env.TOKEN_EMAIL }}
+          user_name: ${{ env.TOKEN_USER }}
+          commit_message: 'commit wheels for version (TBD)'
 
       - name: Archive production artifacts
         uses: actions/upload-artifact@v3
