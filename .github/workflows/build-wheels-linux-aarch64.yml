@@ -44,6 +44,9 @@ jobs:
             apk add ffmpeg ffmpeg-dev git swig python3 py3-pip python3-dev build-base gcc gcc-cross-embedded linux-headers
             python3 -m pip install wheel
             python3 -m pip install cibuildwheel==2.12.3
+          
+          # get pjsip version from wheel filename
+          # find . -name 'pjsua2-*-cp310-cp310-linux_aarch64.whl' | sed 's/.*pjsua2-//; s/[-cp].*//' | head -n 1
           run: |
             ./configure --enable-shared --disable-libwebrtc
             make dep
@@ -54,22 +57,47 @@ jobs:
             cd python
             python3 setup.py install
             make wheel
-            ls -la
             cp -R ./dist/* /artifacts/
-            python -m cibuildwheel --output-dir wheelhouse
+          # python -m cibuildwheel --platform linux --archs aarch64 --output-dir wheelhouse
 
-      - name: Push wheels to repo ${{ vars.WHEELS_REPO }}
+      - name: '(1) Push wheels to repo ${{ vars.WHEELS_REPO }}'
         uses: dmnemec/copy_file_to_another_repo_action@main
         env:
           API_TOKEN_GITHUB: ${{ secrets.API_TOKEN_GITHUB }}
         with:
-          source_file: ./dist/.
+          source_file: './dist/.'
           destination_repo: ${{ vars.WHEELS_REPO }}
           destination_folder: 'wheels'
           user_email: ${{ vars.TOKEN_EMAIL }}
           user_name: ${{ vars.TOKEN_USER }}
-          commit_message: 'commit wheels for version (TBD)'
+          commit_message: 'commit wheels for version (TBD) (1)'
 
+      - name: '(2) Push wheels to repo ${{ vars.WHEELS_REPO }}'
+        uses: dmnemec/copy_file_to_another_repo_action@main
+        env:
+          API_TOKEN_GITHUB: ${{ secrets.API_TOKEN_GITHUB }}
+        with:
+          source_file: '${PWD}/artifacts/.'
+          destination_repo: ${{ vars.WHEELS_REPO }}
+          destination_folder: 'wheels'
+          user_email: ${{ vars.TOKEN_EMAIL }}
+          user_name: ${{ vars.TOKEN_USER }}
+          commit_message: 'commit wheels for version (TBD) (2)'
+
+      - name: '(3) Push wheels to repo ${{ vars.WHEELS_REPO }}'
+        uses: nkoppel/push-files-to-another-repository@1.1.0
+        env:
+          API_TOKEN_GITHUB: ${{ secrets.API_TOKEN_GITHUB }}
+        with:
+          source-files: '${PWD}/artifacts/'
+          destination-username: '${{ vars.TOKEN_USER }}'
+          destination-repository: 'pjsip-wheels'
+          destination-branch: 'main'
+          destination-directory: 'wheels'
+          commit-username: '${{ vars.TOKEN_USER }}'
+          commit-email: '${{ vars.TOKEN_EMAIL }}'
+          commit-message: 'commit wheels for version (TBD) (3)'
+          
       - name: Archive production artifacts
         uses: actions/upload-artifact@v3
         with:
