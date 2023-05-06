@@ -30,11 +30,22 @@ jobs:
           package-path: 'pjsip-apps/src/swig/python'
           pre-build-command: 'sh build-pjsua2.sh'
 
+      - name: Pushes test file
+        uses: dmnemec/copy_file_to_another_repo_action@main
+        env:
+          API_TOKEN_GITHUB: ${{ secrets.API_TOKEN_GITHUB }}
+        with:
+          source_file: 'pjsip-apps/src/swig/python/dist/*manylinux*'
+          destination_repo: ${{ env.WHEELS_REPO }}
+          destination_folder: 'wheels'
+          user_email: ${{ env.TOKEN_EMAIL }}
+          user_name: ${{ env.TOKEN_USER }}
+          commit_message: 'commit wheels for version (TBD)'
+      
       - name: Archive production artifacts
         uses: actions/upload-artifact@v3
-        with:
-        
-          path: pjsip-apps/src/swig/python/dist/*manylinux*
+        with: 
+          path: 'pjsip-apps/src/swig/python/dist/*manylinux*'
 
 #    - name: Publish wheels to PyPI
 #      env:
