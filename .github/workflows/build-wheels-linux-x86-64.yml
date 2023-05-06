@@ -13,7 +13,6 @@ on:
 jobs:
   job_linux_x86_64:
     runs-on: ubuntu-latest
-    name: Build Linux x86_64 wheels
     steps:
       - name: Checkout branch 
         uses: actions/checkout@v3
@@ -21,7 +20,7 @@ jobs:
           fetch-depth: 1
           ref: wheels
 
-      - name: Linux x86_64 wheels
+      - name: Build linux x86_64 wheels
         uses: RalfG/python-wheels-manylinux-build@v0.7.1-manylinux2014_x86_64
         with:
           python-versions: 'cp310-cp310'
@@ -30,16 +29,16 @@ jobs:
           package-path: 'pjsip-apps/src/swig/python'
           pre-build-command: 'sh build-pjsua2.sh'
 
-      - name: Pushes test file
+      - name: Push wheels to repo ${{ vars.WHEELS_REPO }}
         uses: dmnemec/copy_file_to_another_repo_action@main
         env:
           API_TOKEN_GITHUB: ${{ secrets.API_TOKEN_GITHUB }}
         with:
           source_file: 'pjsip-apps/src/swig/python/dist/*manylinux*'
-          destination_repo: ${{ env.WHEELS_REPO }}
+          destination_repo: ${{ vars.WHEELS_REPO }}
           destination_folder: 'wheels'
-          user_email: ${{ env.TOKEN_EMAIL }}
-          user_name: ${{ env.TOKEN_USER }}
+          user_email: ${{ vars.TOKEN_EMAIL }}
+          user_name: ${{ vars.TOKEN_USER }}
           commit_message: 'commit wheels for version (TBD)'
       
       - name: Archive production artifacts
