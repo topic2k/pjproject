@@ -1,0 +1,61 @@
+name: Build wheels for pjsua2 on Linux aarch64
+
+on:
+  release:
+    types: [created]
+  push:
+    branches: [ wheels ]
+
+jobs:        
+  job_linux_aarch64:
+    runs-on: ubuntu-latest
+    name: Build Linux aarch64 wheels
+    steps:
+      - name: Checkout branch 
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 1
+          ref: wheels
+          
+      - name: Linux aarch64 wheels
+        uses: uraimo/run-on-arch-action@release-3.0.0
+        id: runcmd
+        with:
+          arch: none
+          distro: none
+          base_image: homeassistant/raspberrypi4-64-homeassistant
+
+          # Not required, but speeds up builds
+          githubToken: ${{ github.token }}
+          # Create an artifacts directory
+          setup: |
+            echo $PWD
+            echo "$PWD"
+            echo "{$PWD}"
+            mkdir -p "${PWD}/artifacts"
+          # Mount the artifacts directory as /artifacts in the container
+          dockerRunArgs: |
+            --volume "${PWD}/artifacts:/artifacts"
+          install: |
+            apk update
+            apk add ffmpeg ffmpeg-dev git swig python3 py3-pip python3-dev build-base gcc gcc-cross-embedded linux-headers
+            pip install wheel
+          run: |
+            ./configure --enable-shared --disable-libwebrtc
+            make dep
+            make
+            make install
+            cd pjsip-apps/src/swig
+            make python
+            cd python
+            python3 setup.py install
+            make wheel
+            ls -la
+            cp -R ./dist/* /artifacts/
+
+      - name: Archive production artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          path: |
+            "${PWD}/artifacts"
+
