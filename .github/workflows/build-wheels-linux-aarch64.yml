@@ -3,8 +3,12 @@ name: Build wheels for pjsua2 on Linux aarch64
 on:
   release:
     types: [created]
+    paths-ignore:
+      - '.github/workflows/build-wheels-linux-x86-64.yml'
   push:
     branches: [ wheels ]
+    paths-ignore:
+      - '.github/workflows/build-wheels-linux-x86-64.yml'
 
 jobs:        
   job_linux_aarch64:
