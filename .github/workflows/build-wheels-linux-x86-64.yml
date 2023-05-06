@@ -5,7 +5,9 @@ on:
     types: [created]
   push:
     branches: [ wheels ]
-
+    paths-ignore:
+      - '.github/workflows/build-wheels-linux-aarch64.yml'
+      
 jobs:
   job_linux_x86_64:
     runs-on: ubuntu-latest
