@@ -13,7 +13,6 @@ on:
 jobs:        
   job_linux_aarch64:
     runs-on: ubuntu-latest
-    name: Build Linux aarch64 wheels
     steps:
       - name: Checkout branch 
         uses: actions/checkout@v3
@@ -21,7 +20,7 @@ jobs:
           fetch-depth: 1
           ref: wheels
           
-      - name: Linux aarch64 wheels
+      - name: Build linux aarch64 wheels
         uses: uraimo/run-on-arch-action@release-3.0.0
         id: runcmd
         with:
@@ -57,17 +56,18 @@ jobs:
             make wheel
             ls -la
             cp -R ./dist/* /artifacts/
+            python -m cibuildwheel --output-dir wheelhouse
 
-      - name: Pushes test file
+      - name: Push wheels to repo ${{ vars.WHEELS_REPO }}
         uses: dmnemec/copy_file_to_another_repo_action@main
         env:
           API_TOKEN_GITHUB: ${{ secrets.API_TOKEN_GITHUB }}
         with:
           source_file: ./dist/.
-          destination_repo: ${{ env.WHEELS_REPO }}
+          destination_repo: ${{ vars.WHEELS_REPO }}
           destination_folder: 'wheels'
-          user_email: ${{ env.TOKEN_EMAIL }}
-          user_name: ${{ env.TOKEN_USER }}
+          user_email: ${{ vars.TOKEN_EMAIL }}
+          user_name: ${{ vars.TOKEN_USER }}
           commit_message: 'commit wheels for version (TBD)'
 
       - name: Archive production artifacts
