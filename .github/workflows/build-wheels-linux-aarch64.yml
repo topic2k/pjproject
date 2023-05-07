@@ -5,10 +5,12 @@ on:
     types: [created]
     paths-ignore:
       - '.github/workflows/build-wheels-linux-x86-64.yml'
+      - '.github/workflows/build-wheels-test.yml'
   push:
     branches: [ wheels ]
     paths-ignore:
       - '.github/workflows/build-wheels-linux-x86-64.yml'
+      - '.github/workflows/build-wheels-test.yml'
 
 jobs:        
   job_linux_aarch64:
