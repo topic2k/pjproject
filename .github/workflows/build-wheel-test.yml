@@ -78,16 +78,17 @@ jobs:
           # get pjsip version from wheel filename
           # find . -name 'pjsua2-*-cp310-cp310-linux_aarch64.whl' | sed 's/.*pjsua2-//; s/[-cp].*//' | head -n 1
           run: |
-            ./configure --enable-shared --disable-libwebrtc
-            make dep
-            make
-            make install
-            cd pjsip-apps/src/swig
-            make python
-            cd python
-            python3 setup.py install
-            make wheel
-            cp -R ./dist/* /artifacts/
+            echo ${{ github.ref_name }}
+          #  ./configure --enable-shared --disable-libwebrtc
+          #  make dep
+          #  make
+          #  make install
+          #  cd pjsip-apps/src/swig
+          #  make python
+          #  cd python
+          #  python3 setup.py install
+          #  make wheel
+          #  cp -R ./dist/* /artifacts/
           # python -m cibuildwheel --platform linux --archs aarch64 --output-dir wheelhouse
 
       - name: Set env
