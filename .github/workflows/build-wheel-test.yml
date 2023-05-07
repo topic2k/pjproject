@@ -121,7 +121,7 @@ jobs:
         env:
           API_TOKEN_GITHUB: ${{ secrets.API_TOKEN_GITHUB }}
         with:
-          source-directory: '/home/runner/work/pjproject/pjproject/artifacts/'
+          source-directory: '.'
           destination-github-username: '${{ vars.TOKEN_USER }}'
           destination-repository-name: 'pjsip-wheels'
           user-email: '${{ vars.TOKEN_EMAIL }}'
