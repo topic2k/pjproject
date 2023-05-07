@@ -38,4 +38,4 @@ jobs:
           generateReleaseNotes: true
 
       - name: clean the runner workspace
-        uses: TooMuch4U/runner-post-cleanup@v2.1
+        uses: TooMuch4U/actions-clean@v2.1
