@@ -1,10 +1,8 @@
 name: CI Windows
 on:
   push:
-    tags:
-      - deactivated
-    branches:
-      - 'master'
+#    branches:
+#      - 'master'
   pull_request:
     types: [opened, synchronize, reopened]
 jobs:
