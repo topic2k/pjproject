@@ -92,28 +92,6 @@ jobs:
           #  make wheel
           #  cp -R ./dist/* /artifacts/
           # python -m cibuildwheel --platform linux --archs aarch64 --output-dir wheelhouse
-
-      - name: Archive production artifacts
-        continue-on-error: true
-        uses: actions/upload-artifact@v3
-        with:
-          path: |
-            /home/runner/work/pjproject/pjproject/artifacts
-      
-      #- name: '(3) Push wheels to repo ${{ vars.WHEELS_REPO }}'
-      #  uses: nkoppel/push-files-to-another-repository@v1.1.1
-      #  continue-on-error: true
-      #  env:
-      #    API_TOKEN_GITHUB: ${{ secrets.API_TOKEN_GITHUB }}
-      #  with:
-      #    source-files: /home/runner/work/pjproject/pjproject/artifacts/
-      #    destination-username: '${{ vars.TOKEN_USER }}'
-      #    destination-repository: 'pjsip-wheels'
-      #    destination-branch: 'main'
-      #    destination-directory: 'wheels'
-      #    commit-username: '${{ vars.TOKEN_USER }}'
-      #    commit-email: '${{ vars.TOKEN_EMAIL }}'
-      #    commit-message: 'commit wheels for version (TBD) (3)'
       
       - name: Pushes to another repository
         uses: cpina/github-action-push-to-another-repository@main
@@ -121,7 +99,7 @@ jobs:
         env:
           API_TOKEN_GITHUB: ${{ secrets.API_TOKEN_GITHUB }}
         with:
-          source-directory: 'artifacts'
+          source-directory: 'artifacts/'
           destination-github-username: '${{ vars.TOKEN_USER }}'
           destination-repository-name: 'pjsip-wheels'
           user-email: '${{ vars.TOKEN_EMAIL }}'
