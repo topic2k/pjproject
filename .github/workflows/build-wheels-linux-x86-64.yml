@@ -3,7 +3,8 @@ name: Build wheels for pjsua2 on Linux x86_64
 on:
   push:
     tags:
-      - v*
+      - '[0-9]+.[0-9]+'
+      - '[0-9]+.[0-9]+.[0-9]'
 
 jobs:
   job_linux_x86_64:
@@ -15,7 +16,7 @@ jobs:
           fetch-depth: 1
 
       - name: Build linux x86_64 wheels
-        uses: RalfG/python-wheels-manylinux-build@v0.7.1-manylinux2014_x86_64
+        uses: RalfG/python-wheels-manylinux-build@v0.7.1-manylinux_2_28_x86_64
         with:
           python-versions: 'cp39-cp39 cp310-cp310 cp311-cp311'
           build-requirements: 'pydub requests PyYAML typing_extensions'
@@ -27,6 +28,7 @@ jobs:
         uses: ncipollo/release-action@main
         with:
           artifacts: "pjsip-apps/src/swig/python/dist/*manylinux*"
+          name: PJSIP version ${{ github.ref_name }}
           removeArtifacts: true
           replacesArtifacts: true
           allowUpdates: true
