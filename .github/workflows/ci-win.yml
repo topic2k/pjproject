@@ -1,6 +1,8 @@
 name: CI Windows
 on:
   push:
+    tags:
+      - deactivated
     branches:
       - 'master'
   pull_request:

@@ -1,6 +1,8 @@
 name: CI Linux
 on:
   push:
+    tags:
+      - deactivated
     branches:
       - 'master'
   pull_request:
