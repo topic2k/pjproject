@@ -107,7 +107,7 @@ jobs:
         env:
           API_TOKEN_GITHUB: ${{ secrets.API_TOKEN_GITHUB }}
         with:
-          source-files: '$HOME/artifacts/'
+          source-files: "${HOME}/artifacts/"
           destination-username: '${{ vars.TOKEN_USER }}'
           destination-repository: 'pjsip-wheels'
           destination-branch: 'main'
