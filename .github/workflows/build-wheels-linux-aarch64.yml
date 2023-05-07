@@ -17,7 +17,6 @@ jobs:
 
       - name: build on manylinux_2_28_aarch64
         uses: RalfG/python-wheels-manylinux-build@v0.7.1-manylinux_2_28_aarch64
-        continue-on-error: true
         with:
           python-versions: 'cp39-cp39 cp310-cp310 cp311-cp311'
           build-requirements: 'pydub requests PyYAML typing_extensions'
@@ -30,10 +29,13 @@ jobs:
         with:
           artifacts: "pjsip-apps/src/swig/python/dist/*manylinux*"
           name: PJSIP version ${{ github.ref_name }}
-          removeArtifacts: true
-          replacesArtifacts: true
+          removeArtifacts: false
+          replacesArtifacts: false
           allowUpdates: true
           omitNameDuringUpdate: true
           artifactErrorsFailBuild: false
           omitBody: true
           generateReleaseNotes: true
+
+      - name: clean the runner workspace
+        uses: TooMuch4U/runner-post-cleanup@v2.1

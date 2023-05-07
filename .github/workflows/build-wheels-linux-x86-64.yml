@@ -29,10 +29,13 @@ jobs:
         with:
           artifacts: "pjsip-apps/src/swig/python/dist/*manylinux*"
           name: PJSIP version ${{ github.ref_name }}
-          removeArtifacts: true
-          replacesArtifacts: true
+          removeArtifacts: false
+          replacesArtifacts: false
           allowUpdates: true
           omitNameDuringUpdate: true
           artifactErrorsFailBuild: false
           omitBody: true
           generateReleaseNotes: true
+
+      - name: clean the runner workspace
+        uses: TooMuch4U/runner-post-cleanup@v2.1
