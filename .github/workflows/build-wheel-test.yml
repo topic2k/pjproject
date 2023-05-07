@@ -82,16 +82,13 @@ jobs:
           run: |
             echo "===================================================================================================="
             echo "===================================================================================================="
-            ls -la
-            echo "===================================================================================================="
-            cp "pjsip-apps/src/swig/python/setup.py" '${ARTIFACTS_DIR}'
+            cp "pjsip-apps/src/swig/python/setup.py" "${ARTIFACTS_DIR}"
+            cp "pjsip-apps/src/swig/python/Makefile" "/artifacts"
             echo "===================================================================================================="
             cd build
-            ls -la
-            echo '$PWD'
-            pwd
-            echo "===================================================================================================="
-            echo "===================================================================================================="
+            cp rules.mak /artifacts
+            ls -la /artifacts
+            echo "=== ENDE ==========================================================================================="
           #  ./configure --enable-shared --disable-libwebrtc
           #  make dep
           #  make
@@ -107,14 +104,9 @@ jobs:
       - name: Print the input tag to STDOUT
         continue-on-error: true
         run: |
-          echo "=== echo PWD ist ==================================================================================="
-          echo "PWD ist: ${PWD}"
-          pwd
-          echo "=== echo ARTIFACTS_DIR ist ========================================================================="
-          echo "ARTIFACTS_DIR ist ${ARTIFACTS_DIR}"
           echo "=== ls --group-directories-first -hlAp --color=auto ================================================"
-          ls --group-directories-first -hlAp --color=auto
-          echo "===================================================================================================="
+          ls --group-directories-first -hlAp --color=auto artifacts
+          echo "=== ENDE ==========================================================================================="
       - name: '(2) Push wheels to repo ${{ vars.WHEELS_REPO }}'
         uses: dmnemec/copy_file_to_another_repo_action@main
         continue-on-error: true
