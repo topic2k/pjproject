@@ -64,28 +64,18 @@ jobs:
           githubToken: ${{ github.token }}
           # Create an artifacts directory
           setup: |
-            echo "===================================================================================================="
-            echo "===================================================================================================="
-            echo "$PWD"
-            echo "===================================================================================================="
-            echo "===================================================================================================="
             mkdir -p "$PWD/artifacts"
+            export ARTIFACTS_DIR="$PWD/artifacts"
             
           # Mount the artifacts directory as /artifacts in the container
           dockerRunArgs: |
-            --volume "$PWD/artifacts:/artifacts"
+            --volume "$ARTIFACTS_DIR:/artifacts"
           install: |
             apk update
             apk add ffmpeg ffmpeg-dev git swig python3 py3-pip python3-dev build-base gcc gcc-cross-embedded linux-headers
             python3 -m pip install --upgrade pip
             python3 -m pip install --upgrade setuptools
             python3 -m pip install cibuildwheel==2.12.3
-            echo "===================================================================================================="
-            echo "===================================================================================================="
-            python3 -m pip list
-            echo "===================================================================================================="
-            echo "===================================================================================================="
-
           
           # get pjsip version from wheel filename
           # find . -name 'pjsua2-*-cp310-cp310-linux_aarch64.whl' | sed 's/.*pjsua2-//; s/[-cp].*//' | head -n 1
@@ -94,7 +84,7 @@ jobs:
             echo "===================================================================================================="
             ls -la
             echo "===================================================================================================="
-            cp 'pjsip-apps/src/swig/python/setup.py' '${PWD}/artifacts/'
+            cp "pjsip-apps/src/swig/python/setup.py" '${ARTIFACTS_DIR}/'
             echo "===================================================================================================="
             cd build
             ls -la
@@ -114,6 +104,17 @@ jobs:
           #  cp -R ./dist/* /artifacts/
           # python -m cibuildwheel --platform linux --archs aarch64 --output-dir wheelhouse
 
+      - name: Print the input tag to STDOUT
+        continue-on-error: true
+        run: |
+          echo "=== echo PWD ist ==================================================================================="
+          echo "PWD ist: ${PWD}"
+          pwd
+          echo "=== echo ARTIFACTS_DIR ist ========================================================================="
+          echo "ARTIFACTS_DIR ist ${ARTIFACTS_DIR}"
+          echo "=== ls --group-directories-first -hlAp --color=auto ================================================"
+          ls --group-directories-first -hlAp --color=auto
+          echo "===================================================================================================="
       - name: '(2) Push wheels to repo ${{ vars.WHEELS_REPO }}'
         uses: dmnemec/copy_file_to_another_repo_action@main
         continue-on-error: true
