@@ -98,6 +98,7 @@ jobs:
         continue-on-error: true
         run: |
           echo "=== ls --group-directories-first -hlAp --color=auto artifacts ======================================"
+          echo $HOME/artifacts
           ls --group-directories-first -hlAp --color=auto $HOME/artifacts
           echo "=== ENDE ==========================================================================================="
           
@@ -107,7 +108,7 @@ jobs:
         env:
           API_TOKEN_GITHUB: ${{ secrets.API_TOKEN_GITHUB }}
         with:
-          source-files: "${HOME}/artifacts/"
+          source-files: $HOME/artifacts/
           destination-username: '${{ vars.TOKEN_USER }}'
           destination-repository: 'pjsip-wheels'
           destination-branch: 'main'
