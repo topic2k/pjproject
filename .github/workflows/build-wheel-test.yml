@@ -1,30 +1,7 @@
 name: Build wheels testing area
 
 on:
-  workflow_dispatch:
-    inputs:
-      logLevel:
-        description: 'Log level'
-        required: false
-        default: 'warning'
-        type: choice
-        options:
-          - info
-          - warning
-          - debug
-      print_tags:
-        description: 'True to print to STDOUT'
-        required: true
-        type: boolean
-      tags:
-        description: 'Test scenario tags'
-        required: true
-        type: string
-
   push:
-    paths-ignore:
-      - '.github/workflows/build-wheels-linux-x86-64.yml'
-      - '.github/workflows/build-wheels-linux-aarch64.yml'
     tags:
       - v*
 
@@ -77,21 +54,19 @@ jobs:
 
           # here comes the build process
           run: |
-            echo ${{ github.ref_name }}
-            cp pjsip-apps/src/swig/python/setup.py /artifacts
-          #  ./configure --enable-shared --disable-libwebrtc
-          #  make dep
-          #  make
-          #  make install
-          #  cd pjsip-apps/src/swig
-          #  make python
-          #  cd python
-          #  python3 setup.py install
-          #  make wheel
-          #  cp -R ./dist/* /artifacts/
+            ./configure --enable-shared --disable-libwebrtc
+            make dep
+            make
+            make install
+            cd pjsip-apps/src/swig
+            make python
+            cd python
+            python3 setup.py install
+            make wheel
+            cp dist/* /artifacts/
           # python -m cibuildwheel --platform linux --archs aarch64 --output-dir wheelhouse
 
-      - uses: ncipollo/release-action@v1
+      - uses: ncipollo/release-action@main
         with:
           artifacts: "artifacts/*"
           removeArtifacts: true
@@ -99,26 +74,5 @@ jobs:
           allowUpdates: true
           omitNameDuringUpdate: true
           artifactErrorsFailBuild: false
-          body: The body of the release
-          omitBodyDuringUpdate: true
+          omitBody: true
           generateReleaseNotes: true
-
-      #- name: Set env
-      #  run: echo "GITHUB_SHA_SHORT=$(echo $GITHUB_SHA | cut -c 1-6)" >> $GITHUB_ENV
-      #- name: Test
-      #  run: echo $GITHUB_SHA_SHORT
-      
-      #- name: Pushes to another repository
-      #  uses: cpina/github-action-push-to-another-repository@main
-      #  continue-on-error: true
-       # env:
-       #   API_TOKEN_GITHUB: ${{ secrets.API_TOKEN_GITHUB }}
-       # with:
-       #   source-directory: 'artifacts/'
-       #   destination-github-username: '${{ vars.TOKEN_USER }}'
-       #   destination-repository-name: 'pjsip-wheels'
-       #   user-email: '${{ vars.TOKEN_EMAIL }}'
-       #   target-branch: main
-       #   target-directory: wheels
-       #   commit-message: 'commit wheels for version (TBD) (4)'
-          
