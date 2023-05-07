@@ -103,16 +103,17 @@ jobs:
       - name: Print the input tag to STDOUT
         continue-on-error: true
         run: |
-          echo "=== ls --group-directories-first -hlAp --color=auto ================================================"
+          echo "=== ls --group-directories-first -hlAp --color=auto artifacts ======================================"
           ls --group-directories-first -hlAp --color=auto artifacts
           echo "=== ENDE ==========================================================================================="
+          
       - name: '(2) Push wheels to repo ${{ vars.WHEELS_REPO }}'
         uses: dmnemec/copy_file_to_another_repo_action@main
         continue-on-error: true
         env:
           API_TOKEN_GITHUB: ${{ secrets.API_TOKEN_GITHUB }}
         with:
-          source_file: '$PWD/artifacts/.'
+          source_file: '/artifacts/.'
           destination_repo: ${{ vars.WHEELS_REPO }}
           destination_folder: 'wheels'
           user_email: ${{ vars.TOKEN_EMAIL }}
@@ -125,7 +126,7 @@ jobs:
         env:
           API_TOKEN_GITHUB: ${{ secrets.API_TOKEN_GITHUB }}
         with:
-          source-files: '$PWD/artifacts/'
+          source-files: '/artifacts/'
           destination-username: '${{ vars.TOKEN_USER }}'
           destination-repository: 'pjsip-wheels'
           destination-branch: 'main'
@@ -138,4 +139,4 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           path: |
-            "$PWD/artifacts"
+            "/artifacts/."
