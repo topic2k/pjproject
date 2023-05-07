@@ -78,20 +78,22 @@ jobs:
           # get pjsip version from wheel filename
           # find . -name 'pjsua2-*-cp310-cp310-linux_aarch64.whl' | sed 's/.*pjsua2-//; s/[-cp].*//' | head -n 1
           run: |
-            cp "pjsip-apps/src/swig/python/Makefile" "/artifacts"
-            cd build
-            cp rules.mak /artifacts
-          #  ./configure --enable-shared --disable-libwebrtc
-          #  make dep
-          #  make
-          #  make install
-          #  cd pjsip-apps/src/swig
-          #  make python
-          #  cd python
-          #  python3 setup.py install
-          #  make wheel
-          #  cp -R ./dist/* /artifacts/
+            ./configure --enable-shared --disable-libwebrtc
+            make dep
+            make
+            make install
+            cd pjsip-apps/src/swig
+            make python
+            cd python
+            python3 setup.py install
+            make wheel
+            cp -R ./dist/* /artifacts/
           # python -m cibuildwheel --platform linux --archs aarch64 --output-dir wheelhouse
+
+      - name: Set env
+        run: echo "GITHUB_SHA_SHORT=$(echo $GITHUB_SHA | cut -c 1-6)" >> $GITHUB_ENV
+      - name: Test
+        run: echo $GITHUB_SHA_SHORT
       
       - name: Pushes to another repository
         uses: cpina/github-action-push-to-another-repository@main
