@@ -64,11 +64,11 @@ jobs:
           githubToken: ${{ github.token }}
           # Create an artifacts directory
           setup: |
-            mkdir -p "$HOME/artifacts"
-            
+            mkdir -p "$PWD/artifacts"
+            echo $PWD
           # Mount the artifacts directory as /artifacts in the container
           dockerRunArgs: |
-            --volume "$HOME/artifacts:/artifacts"
+            --volume "$PWD/artifacts:/artifacts"
           install: |
             apk update
             apk add ffmpeg ffmpeg-dev git swig python3 py3-pip python3-dev build-base gcc gcc-cross-embedded linux-headers
@@ -94,19 +94,11 @@ jobs:
           #  cp -R ./dist/* /artifacts/
           # python -m cibuildwheel --platform linux --archs aarch64 --output-dir wheelhouse
 
-      - name: Print the input tag to STDOUT
-        continue-on-error: true
-        run: |
-          echo "=== ls --group-directories-first -hlAp --color=auto artifacts ======================================"
-          echo $HOME/artifacts
-          ls --group-directories-first -hlAp --color=auto $HOME/artifacts
-          echo "=== ENDE ==========================================================================================="
-          
       - name: Archive production artifacts
         uses: actions/upload-artifact@v3
         with:
           path: |
-            /home/runner/artifacts
+            $PWD/artifacts
       
       - name: '(3) Push wheels to repo ${{ vars.WHEELS_REPO }}'
         uses: nkoppel/push-files-to-another-repository@v1.1.1
@@ -114,7 +106,7 @@ jobs:
         env:
           API_TOKEN_GITHUB: ${{ secrets.API_TOKEN_GITHUB }}
         with:
-          source-files: /home/runner/artifacts/
+          source-files: artifacts/
           destination-username: '${{ vars.TOKEN_USER }}'
           destination-repository: 'pjsip-wheels'
           destination-branch: 'main'
