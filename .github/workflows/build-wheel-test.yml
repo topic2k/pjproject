@@ -77,6 +77,8 @@ jobs:
           install: |
             apk update
             apk add ffmpeg ffmpeg-dev git swig python3 py3-pip python3-dev build-base gcc gcc-cross-embedded linux-headers
+            python3 -m pip install --upgrade pip
+            python3 -m pip install --upgrade setuptools
             python3 -m pip install cibuildwheel==2.12.3
             echo "===================================================================================================="
             echo "===================================================================================================="
@@ -92,7 +94,7 @@ jobs:
             echo "===================================================================================================="
             ls -la
             echo "===================================================================================================="
-            cp 'pjsip-apps/src/swig/python/setup.py' '$PWD/artifacts/'
+            cp 'pjsip-apps/src/swig/python/setup.py' '${PWD}/artifacts/'
             echo "===================================================================================================="
             cd build
             ls -la
