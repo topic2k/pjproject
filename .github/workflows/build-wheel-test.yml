@@ -65,7 +65,6 @@ jobs:
           # Create an artifacts directory
           setup: |
             mkdir -p "$PWD/artifacts"
-            echo $PWD
           # Mount the artifacts directory as /artifacts in the container
           dockerRunArgs: |
             --volume "$PWD/artifacts:/artifacts"
@@ -98,7 +97,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           path: |
-            $PWD/artifacts
+            /home/runner/work/pjproject/pjproject/artifacts
       
       - name: '(3) Push wheels to repo ${{ vars.WHEELS_REPO }}'
         uses: nkoppel/push-files-to-another-repository@v1.1.1
@@ -106,7 +105,7 @@ jobs:
         env:
           API_TOKEN_GITHUB: ${{ secrets.API_TOKEN_GITHUB }}
         with:
-          source-files: artifacts/
+          source-files: /home/runner/work/pjproject/pjproject/artifacts/
           destination-username: '${{ vars.TOKEN_USER }}'
           destination-repository: 'pjsip-wheels'
           destination-branch: 'main'
