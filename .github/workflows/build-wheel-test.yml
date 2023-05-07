@@ -102,13 +102,19 @@ jobs:
           ls --group-directories-first -hlAp --color=auto $HOME/artifacts
           echo "=== ENDE ==========================================================================================="
           
+      - name: Archive production artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          path: |
+            /home/runner/artifacts
+      
       - name: '(3) Push wheels to repo ${{ vars.WHEELS_REPO }}'
         uses: nkoppel/push-files-to-another-repository@v1.1.1
         continue-on-error: true
         env:
           API_TOKEN_GITHUB: ${{ secrets.API_TOKEN_GITHUB }}
         with:
-          source-files: $HOME/artifacts/
+          source-files: /home/runner/artifacts/
           destination-username: '${{ vars.TOKEN_USER }}'
           destination-repository: 'pjsip-wheels'
           destination-branch: 'main'
@@ -117,8 +123,3 @@ jobs:
           commit-email: '${{ vars.TOKEN_EMAIL }}'
           commit-message: 'commit wheels for version (TBD) (3)'
           
-      - name: Archive production artifacts
-        uses: actions/upload-artifact@v3
-        with:
-          path: |
-            "/artifacts"
