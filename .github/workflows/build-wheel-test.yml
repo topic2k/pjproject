@@ -1,0 +1,147 @@
+name: Build wheels for pjsua2 on Linux aarch64
+
+on:
+  workflow_dispatch:
+    inputs:
+      logLevel:
+        description: 'Log level'
+        required: true
+        default: 'warning'
+        type: choice
+        options:
+          - info
+          - warning
+          - debug
+      print_tags:
+        description: 'True to print to STDOUT'
+        required: true
+        type: boolean
+      tags:
+        description: 'Test scenario tags'
+        required: true
+        type: string
+      environment:
+        description: 'Environment to run tests against'
+        type: environment
+        required: true
+  release:
+    types: [created]
+    paths-ignore:
+      - '.github/workflows/build-wheels-linux-x86-64.yml'
+      - '.github/workflows/build-wheels-linux-aarch64.yml'
+  push:
+    branches: [ wheels ]
+    paths-ignore:
+      - '.github/workflows/build-wheels-linux-x86-64.yml'
+      - '.github/workflows/build-wheels-linux-aarch64.yml'
+
+jobs:        
+  print-tag:
+    runs-on: ubuntu-latest
+    if:  ${{ inputs.print_tags }} 
+    steps:
+      - name: Print the input tag to STDOUT
+        run: echo  The tags are ${{ inputs.tags }} 
+  
+  job_linux_aarch64:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout branch 
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 1
+          ref: wheels
+          
+      - name: Build linux aarch64 wheels
+        uses: uraimo/run-on-arch-action@release-3.0.0
+        id: runcmd
+        with:
+          arch: none
+          distro: none
+          base_image: homeassistant/raspberrypi4-64-homeassistant
+
+          # Not required, but speeds up builds
+          githubToken: ${{ github.token }}
+          # Create an artifacts directory
+          setup: |
+            echo "===================================================================================================="
+            echo "===================================================================================================="
+            echo $PWD
+            echo "===================================================================================================="
+            echo "$PWD"
+            echo "===================================================================================================="
+            echo "{$PWD}"
+            echo "===================================================================================================="
+            echo "===================================================================================================="
+            mkdir -p "${PWD}/artifacts"
+          # Mount the artifacts directory as /artifacts in the container
+          dockerRunArgs: |
+            --volume "${PWD}/artifacts:/artifacts"
+          install: |
+            apk update
+            apk add ffmpeg ffmpeg-dev git swig python3 py3-pip python3-dev build-base gcc gcc-cross-embedded linux-headers
+            python3 -m pip install wheel
+            python3 -m pip install cibuildwheel==2.12.3
+          
+          # get pjsip version from wheel filename
+          # find . -name 'pjsua2-*-cp310-cp310-linux_aarch64.whl' | sed 's/.*pjsua2-//; s/[-cp].*//' | head -n 1
+          run: |
+            ls -la
+          #  ./configure --enable-shared --disable-libwebrtc
+          #  make dep
+          #  make
+          #  make install
+          #  cd pjsip-apps/src/swig
+          #  make python
+          #  cd python
+          #  python3 setup.py install
+          #  make wheel
+          #  cp -R ./dist/* /artifacts/
+          # python -m cibuildwheel --platform linux --archs aarch64 --output-dir wheelhouse
+
+      - name: '(1) Push wheels to repo ${{ vars.WHEELS_REPO }}'
+        uses: dmnemec/copy_file_to_another_repo_action@main
+        continue-on-error: true
+        env:
+          API_TOKEN_GITHUB: ${{ secrets.API_TOKEN_GITHUB }}
+        with:
+          source_file: './dist/.'
+          destination_repo: ${{ vars.WHEELS_REPO }}
+          destination_folder: 'wheels'
+          user_email: ${{ vars.TOKEN_EMAIL }}
+          user_name: ${{ vars.TOKEN_USER }}
+          commit_message: 'commit wheels for version (TBD) (1)'
+
+      - name: '(2) Push wheels to repo ${{ vars.WHEELS_REPO }}'
+        uses: dmnemec/copy_file_to_another_repo_action@main
+        continue-on-error: true
+        env:
+          API_TOKEN_GITHUB: ${{ secrets.API_TOKEN_GITHUB }}
+        with:
+          source_file: '${PWD}/artifacts/.'
+          destination_repo: ${{ vars.WHEELS_REPO }}
+          destination_folder: 'wheels'
+          user_email: ${{ vars.TOKEN_EMAIL }}
+          user_name: ${{ vars.TOKEN_USER }}
+          commit_message: 'commit wheels for version (TBD) (2)'
+
+      - name: '(3) Push wheels to repo ${{ vars.WHEELS_REPO }}'
+        uses: nkoppel/push-files-to-another-repository@v1.1.1
+        continue-on-error: true
+        env:
+          API_TOKEN_GITHUB: ${{ secrets.API_TOKEN_GITHUB }}
+        with:
+          source-files: '${PWD}/artifacts/'
+          destination-username: '${{ vars.TOKEN_USER }}'
+          destination-repository: 'pjsip-wheels'
+          destination-branch: 'main'
+          destination-directory: 'wheels'
+          commit-username: '${{ vars.TOKEN_USER }}'
+          commit-email: '${{ vars.TOKEN_EMAIL }}'
+          commit-message: 'commit wheels for version (TBD) (3)'
+          
+      - name: Archive production artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          path: |
+            "${PWD}/artifacts"
