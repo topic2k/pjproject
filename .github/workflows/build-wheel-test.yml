@@ -1,4 +1,4 @@
-name: Build wheels for pjsua2 on Linux aarch64
+name: Build wheels testing area
 
 on:
   workflow_dispatch:
