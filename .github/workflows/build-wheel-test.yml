@@ -24,16 +24,13 @@ on:
         description: 'Environment to run tests against'
         type: environment
         required: true
-  release:
-    types: [created]
-    paths-ignore:
-      - '.github/workflows/build-wheels-linux-x86-64.yml'
-      - '.github/workflows/build-wheels-linux-aarch64.yml'
   push:
     branches: [ wheels ]
     paths-ignore:
       - '.github/workflows/build-wheels-linux-x86-64.yml'
       - '.github/workflows/build-wheels-linux-aarch64.yml'
+    tags:
+      - "v*"
 
 jobs:        
   print-tag:
@@ -62,12 +59,16 @@ jobs:
 
           # Not required, but speeds up builds
           githubToken: ${{ github.token }}
+
           # Create an artifacts directory
           setup: |
             mkdir -p "$PWD/artifacts"
+
           # Mount the artifacts directory as /artifacts in the container
           dockerRunArgs: |
             --volume "$PWD/artifacts:/artifacts"
+
+          # install everything that is needed for building the wheels
           install: |
             apk update
             apk add ffmpeg ffmpeg-dev git swig python3 py3-pip python3-dev build-base gcc gcc-cross-embedded linux-headers
@@ -77,8 +78,11 @@ jobs:
           
           # get pjsip version from wheel filename
           # find . -name 'pjsua2-*-cp310-cp310-linux_aarch64.whl' | sed 's/.*pjsua2-//; s/[-cp].*//' | head -n 1
+
+          # here comes the build process
           run: |
             echo ${{ github.ref_name }}
+            cp pjsip-apps/src/swig/python/setup.py /artifacts
           #  ./configure --enable-shared --disable-libwebrtc
           #  make dep
           #  make
@@ -91,22 +95,34 @@ jobs:
           #  cp -R ./dist/* /artifacts/
           # python -m cibuildwheel --platform linux --archs aarch64 --output-dir wheelhouse
 
-      - name: Set env
-        run: echo "GITHUB_SHA_SHORT=$(echo $GITHUB_SHA | cut -c 1-6)" >> $GITHUB_ENV
-      - name: Test
-        run: echo $GITHUB_SHA_SHORT
-      
-      - name: Pushes to another repository
-        uses: cpina/github-action-push-to-another-repository@main
-        continue-on-error: true
-        env:
-          API_TOKEN_GITHUB: ${{ secrets.API_TOKEN_GITHUB }}
+      - uses: ncipollo/release-action@v1
         with:
-          source-directory: 'artifacts/'
-          destination-github-username: '${{ vars.TOKEN_USER }}'
-          destination-repository-name: 'pjsip-wheels'
-          user-email: '${{ vars.TOKEN_EMAIL }}'
-          target-branch: main
-          target-directory: wheels
-          commit-message: 'commit wheels for version (TBD) (4)'
+          artifacts: "artifacts/*"
+          removeArtifacts: true
+          replacesArtifacts: true
+          allowUpdates: true
+          omitNameDuringUpdate: true
+          artifactErrorsFailBuild: false
+          body: The body of the release
+          omitBodyDuringUpdate: true
+          generateReleaseNotes: true
+
+      #- name: Set env
+      #  run: echo "GITHUB_SHA_SHORT=$(echo $GITHUB_SHA | cut -c 1-6)" >> $GITHUB_ENV
+      #- name: Test
+      #  run: echo $GITHUB_SHA_SHORT
+      
+      #- name: Pushes to another repository
+      #  uses: cpina/github-action-push-to-another-repository@main
+      #  continue-on-error: true
+       # env:
+       #   API_TOKEN_GITHUB: ${{ secrets.API_TOKEN_GITHUB }}
+       # with:
+       #   source-directory: 'artifacts/'
+       #   destination-github-username: '${{ vars.TOKEN_USER }}'
+       #   destination-repository-name: 'pjsip-wheels'
+       #   user-email: '${{ vars.TOKEN_EMAIL }}'
+       #   target-branch: main
+       #   target-directory: wheels
+       #   commit-message: 'commit wheels for version (TBD) (4)'
           
